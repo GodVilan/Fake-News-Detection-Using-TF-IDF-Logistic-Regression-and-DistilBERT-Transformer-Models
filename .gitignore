@@ -3,6 +3,15 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+.env
+data/ISOT/*.csv
+data/Mahdi Mashayekhi/*.csv
+models
+results/tfidf/*.txt
+results/tfidf/*.json
+results/transformer/*.txt
+results/transformer/*.json
+
 # C extensions
 *.so
 

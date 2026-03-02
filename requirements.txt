@@ -1,0 +1,19 @@
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+joblib
+streamlit
+nltk
+regex
+shap
+requests
+python-dotenv
+
+# Transformer stack
+transformers
+datasets
+evaluate
+torch
+accelerate

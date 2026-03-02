@@ -1,0 +1,153 @@
+<svg viewBox="0 0 900 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Define gradients and styles -->
+  <defs>
+    <linearGradient id="preprocessGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3498DB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2874A6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="computeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E67E22;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#CA6F1E;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="outputGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#27AE60;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E8449;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.3"/>
+    </filter>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#34495E" />
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="450" y="40" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="#2C3E50">
+    TF-IDF Feature Extraction Workflow
+  </text>
+  
+  <!-- Horizontal preprocessing pipeline -->
+  <!-- Raw Text -->
+  <rect x="50" y="90" width="150" height="70" rx="8" fill="url(#preprocessGradient)" filter="url(#shadow)"/>
+  <text x="125" y="120" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">
+    Raw Text
+  </text>
+  <text x="125" y="140" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white" opacity="0.9">
+    Input Document
+  </text>
+  
+  <!-- Arrow -->
+  <line x1="200" y1="125" x2="240" y2="125" stroke="#34495E" stroke-width="3" marker-end="url(#arrowhead)"/>
+  
+  <!-- Tokenization -->
+  <rect x="240" y="90" width="150" height="70" rx="8" fill="url(#preprocessGradient)" filter="url(#shadow)"/>
+  <text x="315" y="120" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">
+    Tokenization
+  </text>
+  <text x="315" y="140" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white" opacity="0.9">
+    Split into tokens
+  </text>
+  
+  <!-- Arrow -->
+  <line x1="390" y1="125" x2="430" y2="125" stroke="#34495E" stroke-width="3" marker-end="url(#arrowhead)"/>
+  
+  <!-- Stopword Removal -->
+  <rect x="430" y="90" width="170" height="70" rx="8" fill="url(#preprocessGradient)" filter="url(#shadow)"/>
+  <text x="515" y="120" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">
+    Stopword Removal
+  </text>
+  <text x="515" y="140" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white" opacity="0.9">
+    Remove common words
+  </text>
+  
+  <!-- Arrow -->
+  <line x1="600" y1="125" x2="640" y2="125" stroke="#34495E" stroke-width="3" marker-end="url(#arrowhead)"/>
+  
+  <!-- Lemmatization -->
+  <rect x="640" y="90" width="170" height="70" rx="8" fill="url(#preprocessGradient)" filter="url(#shadow)"/>
+  <text x="725" y="120" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">
+    Lemmatization
+  </text>
+  <text x="725" y="140" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white" opacity="0.9">
+    Reduce to base form
+  </text>
+  
+  <!-- Vertical arrow down -->
+  <line x1="725" y1="160" x2="725" y2="220" stroke="#34495E" stroke-width="3" marker-end="url(#arrowhead)"/>
+  <line x1="725" y1="220" x2="450" y2="220" stroke="#34495E" stroke-width="3"/>
+  <line x1="450" y1="220" x2="450" y2="260" stroke="#34495E" stroke-width="3" marker-end="url(#arrowhead)"/>
+  
+  <!-- Compute Term Frequency -->
+  <rect x="300" y="260" width="300" height="80" rx="8" fill="url(#computeGradient)" filter="url(#shadow)"/>
+  <text x="450" y="290" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">
+    Compute Term Frequency (TF)
+  </text>
+  <text x="450" y="315" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white" opacity="0.9">
+    TF = (Number of times term appears) /
+  </text>
+  <text x="450" y="330" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white" opacity="0.9">
+    (Total terms in document)
+  </text>
+  
+  <!-- Arrow -->
+  <line x1="450" y1="340" x2="450" y2="380" stroke="#34495E" stroke-width="3" marker-end="url(#arrowhead)"/>
+  
+  <!-- Compute IDF -->
+  <rect x="275" y="380" width="350" height="80" rx="8" fill="url(#computeGradient)" filter="url(#shadow)"/>
+  <text x="450" y="410" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">
+    Compute Inverse Document Frequency (IDF)
+  </text>
+  <text x="450" y="435" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white" opacity="0.9">
+    IDF = log((Total documents) /
+  </text>
+  <text x="450" y="450" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white" opacity="0.9">
+    (Documents containing term))
+  </text>
+  
+  <!-- Arrow -->
+  <line x1="450" y1="460" x2="450" y2="500" stroke="#34495E" stroke-width="3" marker-end="url(#arrowhead)"/>
+  
+  <!-- Multiply TF × IDF -->
+  <rect x="300" y="500" width="300" height="80" rx="8" fill="url(#computeGradient)" filter="url(#shadow)"/>
+  <text x="450" y="530" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">
+    Multiply (TF × IDF)
+  </text>
+  <text x="450" y="555" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white" opacity="0.9">
+    Calculate TF-IDF score for each term
+  </text>
+  <text x="450" y="570" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white" opacity="0.9">
+    TF-IDF = TF × IDF
+  </text>
+  
+  <!-- Arrow -->
+  <line x1="450" y1="580" x2="450" y2="620" stroke="#34495E" stroke-width="3" marker-end="url(#arrowhead)"/>
+  
+  <!-- TF-IDF Vector -->
+  <rect x="250" y="620" width="400" height="90" rx="8" fill="url(#outputGradient)" filter="url(#shadow)"/>
+  <text x="450" y="650" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">
+    TF-IDF Vector Representation
+  </text>
+  <text x="450" y="675" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white" opacity="0.9">
+    Numerical feature vector for machine learning
+  </text>
+  <text x="450" y="695" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="white" opacity="0.85">
+    [0.23, 0.45, 0.12, ..., 0.67]
+  </text>
+  
+  <!-- Decorative labels -->
+  <text x="50" y="250" font-family="Arial, sans-serif" font-size="13" font-style="italic" fill="#7F8C8D">
+    Preprocessing Steps
+  </text>
+  <text x="50" y="430" font-family="Arial, sans-serif" font-size="13" font-style="italic" fill="#7F8C8D">
+    TF-IDF Computation
+  </text>
+  <text x="50" y="670" font-family="Arial, sans-serif" font-size="13" font-style="italic" fill="#7F8C8D">
+    Final Output
+  </text>
+  
+  <!-- Decorative corner elements -->
+  <circle cx="30" cy="125" r="6" fill="#3498DB" opacity="0.5"/>
+  <circle cx="870" cy="125" r="6" fill="#3498DB" opacity="0.5"/>
+  <circle cx="30" cy="665" r="6" fill="#27AE60" opacity="0.5"/>
+  <circle cx="870" cy="665" r="6" fill="#27AE60" opacity="0.5"/>
+</svg>
