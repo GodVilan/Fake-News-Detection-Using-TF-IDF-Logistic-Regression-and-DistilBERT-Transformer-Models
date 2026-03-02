@@ -1,324 +1,161 @@
-# 📰 Fake News Detection System  
-### Comparative Study: TF-IDF Logistic Regression vs DistilBERT Transformer
+# 📰 Fake News Detection System: Classical NLP vs. Transformers
+### An End-to-End Machine Learning Pipeline & Comparative Study
 
 ---
 
 ## 🚀 Overview
 
-This project implements a large-scale **Fake News Detection system** using two fundamentally different machine learning paradigms:
-- **Classical NLP Model:** TF-IDF + Logistic Regression  
-- **Transformer Model:** Fine-tuned DistilBERT  
+This repository features an end-to-end Machine Learning application designed to detect misinformation. Beyond a simple comparative study, this project implements a full **production-style pipeline**—from data ingestion and model training to inference and live deployment via a Streamlit web interface. 
 
-Rather than focusing only on accuracy, this project evaluates:
-- Model behavior differences  
-- Recall bias trade-offs  
-- Operational stability  
-- Deployment feasibility  
-- Production suitability  
+The system compares two fundamentally different machine learning paradigms:
+1. **Classical NLP:** TF-IDF + Logistic Regression (Optimized for speed, interpretability, and low footprint).
+2. **Deep Learning:** Fine-tuned `distilbert-base-uncased` (Optimized for contextual semantic understanding).
 
-The system was trained and evaluated on a combined dataset of **62,834 labeled news articles**.
+Rather than chasing raw accuracy, this project evaluates operational stability, decision-threshold tuning for recall biases, feature explainability, and deployment feasibility.
 
 ---
 
-## 🎯 Problem Motivation
+## ✨ Key Engineering Features
 
-Misinformation detection is critical in:
-- Social media moderation systems  
-- News aggregation platforms  
-- Search engine ranking pipelines  
-- Content trust scoring systems  
-
-In real-world systems, the key challenge is:
-> Should we maximize fake-news detection (high recall)  
-> or avoid falsely flagging legitimate journalism?
-
-This project explores that trade-off through empirical comparison.
+- **Live News Integration:** Integrates with the `NewsAPI` to fetch real-time articles and classify them dynamically in the UI.
+- **Dynamic Threshold Tuning:** The DistilBERT model doesn't just output argmax probabilities; it calculates the optimal decision threshold based on maximizing the F1-score during validation to handle recall trade-offs.
+- **Feature Explainability:** The TF-IDF pipeline extracts and stores feature importances (top predictive keywords for Real vs. Fake) to provide heuristic explainability in the UI.
+- **Interactive UI:** A multi-tab Streamlit dashboard allowing users to input text, fetch live news, and compare both models side-by-side.
+- **Automated Experiment Tracking:** Training scripts automatically log classification reports, confusion matrices, ROC-AUC curves, and loss curves to a standardized `results/` directory.
 
 ---
 
-## 📚 Dataset
+## 📚 Data Engineering
 
-**Total Samples:** 62,834  
-**Classes:** Real vs Fake (Balanced)
+**Total Samples:** 62,834 | **Classes:** Real vs Fake (Balanced)
 
-### Sources
-- ISOT Fake News Dataset (2016–2017)
-- Mahdi Mashayekhi Fake News Dataset (2025)
+* **ISOT Fake News Dataset** (2016–2017)
+* **Mahdi Mashayekhi Fake News Dataset** (2025)
 
-### Dataset Strategy
+**Pipeline (`src/preprocess.py` & `src/data_utils.py`):**
+- Automated balancing of source datasets prior to concatenation.
+- NLTK-based cleaning pipeline: URL and HTML stripping, non-alphabetic filtering, stopword removal, and WordNet lemmatization.
 
-The datasets were combined to:
-- Reduce source-specific bias  
-- Improve generalization  
-- Simulate domain drift across time  
-- Increase diversity in writing styles  
-
-⚠️ Raw datasets are not tracked in this repository.  
-See the **Data Setup** section below.
+*⚠️ Note: Raw datasets are excluded from version control. See the Data Setup section below.*
 
 ---
 
-## 🧹 Data Engineering Pipeline
-
-Implemented in `src/preprocess.py`.
-
-### Preprocessing Steps
-- Lowercasing
-- URL removal
-- HTML tag stripping
-- Punctuation removal
-- Non-alphabetic token filtering
-- Stopword removal (NLTK)
-- Lemmatization
-- Title + article body concatenation
-
-The preprocessing pipeline is modular and reusable across both models.
-
----
-
-## 🧠 Modeling Approaches
-
----
+## 🧠 Model Architectures & Performance
 
 ### 1️⃣ TF-IDF + Logistic Regression
+- **Architecture:** 30,000 max features, Uni-grams & Bi-grams, `saga` solver, balanced class weighting.
+- **Performance Focus:** Highly interpretable. Achieves strong baseline separation with minimal inference latency. Excellent for cost-efficient deployment.
+- **Explainability:** Feature weights are serialized to JSON, allowing the UI to highlight tokens driving the "Fake" or "Real" predictions.
 
-**Configuration**
-- 30,000 TF-IDF features  
-- Uni-grams + Bi-grams  
-- L2 regularization  
-- Balanced class weighting  
-
-**Strengths**
-- Interpretable coefficients  
-- Fast training and inference  
-- Low memory footprint  
-- Cost-efficient deployment  
-- Stable under domain shifts  
+### 2️⃣ Fine-Tuned DistilBERT
+- **Architecture:** `distilbert-base-uncased` fine-tuned with HuggingFace `Trainer`, AdamW optimizer, and dynamic padding.
+- **Performance Focus:** Captures nuanced, deceptive semantic patterns. Includes an automated script that sweeps probability thresholds (0.1 to 0.9) to find the exact cut-off that maximizes the F1-score, reducing false positives against legitimate journalism.
 
 ---
 
-### 2️⃣ DistilBERT Transformer
-
-**Configuration**
-- Pretrained DistilBERT encoder (HuggingFace)  
-- Max token length: 256  
-- AdamW optimizer  
-- Early stopping  
-- Decision threshold tuning  
-
-**Strengths**
-- Context-aware embeddings  
-- Captures semantic relationships  
-- Strong performance on NLP tasks  
-- Learns nuanced deceptive patterns  
-
----
-
-## 📊 Evaluation Metrics
-
-Both models evaluated using:
-- Accuracy  
-- Precision  
-- Recall  
-- F1-Score  
-- ROC-AUC  
-- Confusion Matrix  
-
-This ensures performance analysis beyond simple accuracy.
-
----
-
-## 📈 Results Summary
-
-### 🔹 TF-IDF + Logistic Regression
-
-| Metric | Score |
-|--------|-------|
-| Accuracy | 83.64% |
-| Precision | Balanced |
-| Recall | Balanced |
-| ROC-AUC | Strong separation |
-
-**Behavior:** Stable, balanced classification across both classes.
-
----
-
-### 🔹 DistilBERT Transformer
-
-| Metric | Score |
-|--------|-------|
-| Accuracy | 83.71% |
-| Fake Recall | 100% |
-| Real Recall | 67% |
-| ROC-AUC | Comparable |
-
-**Behavior:** Highly sensitive to deceptive cues.  
-Tends to over-predict the Fake class.
-
----
-
-## 🔍 Key Insight
-
-Despite nearly identical accuracy:
-- The transformer aggressively prioritizes detecting fake articles.
-- The classical model provides more balanced predictions.
-
-This demonstrates a critical production lesson:
-> Higher model complexity does not automatically guarantee operational superiority.
-
-In real moderation systems, excessive false positives can:
-- Suppress legitimate journalism  
-- Damage platform trust  
-- Increase legal and compliance risk  
-
----
-
-## ⚙️ Production Considerations
-
-| Factor | TF-IDF Model | DistilBERT |
-|--------|--------------|------------|
-| Training Time | Fast | High |
-| Inference Latency | Low | Moderate |
-| GPU Required | No | Recommended |
-| Interpretability | High | Low |
-| Deployment Cost | Minimal | Higher |
-| Scalability | High | Moderate |
-
----
-
-## 🏗 System Architecture
-
-See diagrams in:
-
-```text
-figures/
-├── System_Architecture.svg
-└── Workflow.svg
-```
-
----
-
-## 📁 Project Structure
+## 🏗 System Architecture & Repository Structure
 
 ```text
 .
-├── app/
-│   └── app.py
-├── figures/
-│   ├── System_Architecture.svg
-│   └── Workflow.svg
-├── results/
+├── app.py                         # Streamlit Web Application
+├── data/                          # Raw datasets (Not tracked)
+├── models/                        # Serialized models (.pkl & HF weights)
+├── results/                       # Auto-generated artifacts
 │   ├── tfidf/
+│   │   ├── classification_report.txt (Not tracked)
 │   │   ├── confusion_matrix.png
+│   │   ├── feature_importances.json (Not tracked)
+│   │   ├── metadata.json (Not tracked)
+│   │   ├── performance_metrics.txt (Not tracked)
 │   │   └── roc_auc.png
 │   └── transformer/
+│       ├── classification_report.txt (Not tracked)
 │       ├── confusion_matrix.png
 │       ├── loss_curve.png
-│       └── roc_auc.png
-├── src/
-│   ├── preprocess.py
-│   ├── train.py
-│   ├── train_transformer.py
-│   ├── evaluate.py
-│   ├── evaluate_transformer.py
-│   ├── predict.py
-│   └── predict_transformer.py
+│       ├── metadata.json (Not tracked)
+│       ├── performance_metrics.txt (Not tracked)
+│       ├── roc_auc.png
+│       └── threshold.txt          # Dynamically tuned F1 threshold
+├── src/                           # Backend Pipeline Modules
+│   ├── data_utils.py              # Data ingestion & NewsAPI logic
+│   ├── evaluate.py                # TF-IDF evaluation logic
+│   ├── evaluate_transformer.py    # DistilBERT evaluation & threshold tuning
+│   ├── predict.py                 # Classical inference wrapper
+│   ├── predict_transformer.py     # Deep learning inference wrapper
+│   ├── preprocess.py              # NLTK text cleaning pipeline
+│   ├── train.py                   # TF-IDF training script
+│   └── train_transformer.py       # DistilBERT fine-tuning script
 ├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## 🛠 Installation
+## 🛠 Local Setup & Installation
 
+### 1. Environment Setup
 ```bash
+# Clone the repository
+git clone [https://github.com/GodVilan/Fake-News-Detection-Using-TF-IDF-Logistic-Regression-and-DistilBERT-Transformer-Models.git](https://github.com/GodVilan/Fake-News-Detection-Using-TF-IDF-Logistic-Regression-and-DistilBERT-Transformer-Models.git)
+cd Fake-News-Detection-Using-TF-IDF-Logistic-Regression-and-DistilBERT-Transformer-Models
+
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 🏋️ Training
+### 2. Data Preparation
+Download the ISOT and Mahdi Mashayekhi datasets and place them in the `data/` folder:
+- `data/ISOT/True.csv` and `data/ISOT/Fake.csv`
+- `data/Mahdi Mashayekhi/fake_news_dataset.csv`
 
-**Train TF-IDF Model**
-```bash
-python src/train.py
-```
-
-**Train Transformer Model**
-```bash
-python src/train_transformer.py
-```
-
-### 🔮 Inference
-
-**Classical Model**
-```bash
-python src/predict.py --text "Your news article here"
-```
-
-**Transformer Model**
-```bash
-python src/predict_transformer.py --text "Your news article here"
+### 3. Environment Variables
+To enable the Live News fetching feature in the UI, create a `.env` file in the root directory:
+```env
+NEWSAPI_KEY=your_api_key_here
 ```
 
 ---
 
-## 📦 Data Setup
+## 🏋️ Training the Models
 
-Download datasets from their respective public sources and place them locally under:
+Run the training scripts from the root directory. Results, plots, and metadata will be automatically saved to the `results/` folder, and models to the `models/` folder.
 
-```text
-data/
+**Train TF-IDF Pipeline:**
+```bash
+python -m src.train
 ```
-*Raw datasets and trained model artifacts are intentionally excluded from version control.*
+
+**Fine-tune DistilBERT (GPU Recommended):**
+```bash
+python -m src.train_transformer --epochs 3 --batch_size 16
+```
 
 ---
 
-## 🧪 Technical Stack
+## 💻 Running the Streamlit App
 
-- Python
-- Scikit-learn
-- PyTorch
-- HuggingFace Transformers
-- NLTK
-- Pandas
-- NumPy
+Launch the interactive dashboard to analyze text, compare models, and fetch live news:
 
----
-
-## 🚧 Limitations
-
-- Dataset bias from public sources
-- No multilingual support
-- No adversarial robustness testing
-- No real-time streaming deployment
-- Limited calibration analysis
+```bash
+streamlit run app.py
+```
 
 ---
 
 ## 🔮 Future Improvements
-
-- Ensemble modeling
-- Model calibration tuning
-- Drift detection monitoring
-- Adversarial training
-- FastAPI deployment
-- Docker containerization
-- CI/CD integration
+- **Ensemble Inference:** Combining the TF-IDF feature weights with DistilBERT embeddings.
+- **Drift Detection:** Implementing monitoring for data drift as news writing styles evolve.
+- **Dockerization:** Containerizing the Streamlit app and FastAPI backend for scalable cloud deployment.
 
 ---
 
 ## 👤 Author
 
-**Srikanth Reddy Nandireddy** M.S. Data Science & Artificial Intelligence  
-University of Central Missouri  
-
-**Interests:**
-- Applied Machine Learning  
-- NLP Systems  
-- Production ML Engineering  
-- Model Evaluation & Optimization  
+**Srikanth Reddy Nandireddy** *M.S. Data Science & Artificial Intelligence* *University of Central Missouri* **Focus Areas:** Applied Machine Learning | NLP Systems | Production ML Engineering | Generative AI
 
 ---
-
-## 📜 License
-
-Released for academic and research purposes.
+*Released for academic, portfolio, and research purposes.*
